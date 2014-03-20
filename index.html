@@ -1,0 +1,390 @@
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <link href="http://s.codepen.io/assets/reset/reset.css">
+  <style type="text/css">
+  #tridiv {
+    perspective: 800px;
+    position: absolute;
+    overflow: hidden;
+    width: 95%;
+    height: 90%;
+    background: transparent;
+    font-size: 200%;
+  }
+  .face {
+    box-shadow: inset 0 0 0 1px rgba(150, 150, 150, 1);
+  }
+  .scene, .shape, .face, .face-wrapper, .cr {
+    position: absolute;
+    transform-style: preserve-3d;
+  }
+  .scene {
+    width: 80em;
+    height: 80em;
+    top: 50%;
+    left: 50%;
+    margin: -40em 0 0 -40em;
+  }
+  .shape {
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform-origin: 50%;
+  }
+  .face, .face-wrapper {
+    overflow: hidden;
+    transform-origin: 0 0;
+    backface-visibility: hidden;
+    /* hidden by default, prevent blinking and other weird rendering glitchs */
+  }
+  .face {
+    background-size: 100% 100%!important;
+    background-position: center;
+  }
+  .face-wrapper .face {
+    left: 100%;
+    width: 100%;
+    height: 100%
+  }
+  .photon-shader {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%
+  }
+  .side {
+    left: 50%;
+  }
+  .cr, .cr .side {
+    height: 100%;
+  }
+  [class*="cuboid"] .ft, [class*="cuboid"] .bk {
+    width: 100%;
+    height: 100%;
+  }
+  [class*="cuboid"] .bk {
+    left: 100%;
+  }
+  [class*="cuboid"] .rt {
+    transform: rotateY(-90deg) translateX(-50%);
+  }
+  [class*="cuboid"] .lt {
+    transform: rotateY(90deg) translateX(-50%);
+  }
+  [class*="cuboid"] .tp {
+    transform: rotateX(90deg) translateY(-50%);
+  }
+  [class*="cuboid"] .bm {
+    transform: rotateX(-90deg) translateY(-50%);
+  }
+  [class*="cuboid"] .lt {
+    left: 100%;
+  }
+  [class*="cuboid"] .bm {
+    top: 100%;
+  }
+
+  /* .cub-1 styles */
+  .cub-1 {
+    transform:translate3D(0em, 0em, 0em) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    opacity:1;
+    width:1em;
+    height:1em;
+    margin:-0.5em 0 0 -0.5em;
+  }
+  .cub-1 .ft {
+    transform:translateZ(0.5em);
+  }
+  .cub-1 .bk {
+    transform:translateZ(-0.5em) rotateY(180deg);
+  }
+  .cub-1 .rt, .cub-1 .lt {
+    width:1em;
+    height:1em;
+  }
+  .cub-1 .tp, .cub-1 .bm {
+    width:1em;
+    height:1em;
+  }
+  .cub-1 .face {
+    background-color:#fffd97;
+  }
+
+  /* .cub-2 styles */
+  .cub-2 {
+    transform:translate3D(0em, 0em, 0em) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    opacity:1;
+    width:1em;
+    height:1em;
+    margin:-0.5em 0 0 -0.5em;
+  }
+  .cub-2 .ft {
+    transform:translateZ(1.5em);
+  }
+  .cub-2 .bk {
+    transform:translateZ(-1.5em) rotateY(180deg);
+  }
+  .cub-2 .rt, .cub-2 .lt {
+    width:3em;
+    height:1em;
+  }
+  .cub-2 .tp, .cub-2 .bm {
+    width:1em;
+    height:3em;
+  }
+  .cub-2 .face {
+    background-color:#95ff9e;
+  }
+
+  /* .cub-32 styles */
+  .cub-32 {
+    /*transform:translate3D(0em, -1em, 0em) rotateX(0deg) rotateY(0deg) rotateZ(0deg);*/
+    opacity:1;
+    width:1em;
+    height:1em;
+    margin:-1.5em 0 0 0.5em;
+  }
+  .cub-32 .ft {
+    transform:translateZ(0.5em);
+  }
+  .cub-32 .bk {
+    transform:translateZ(-0.5em) rotateY(180deg);
+  }
+  .cub-32 .rt, .cub-32 .lt {
+    width:1em;
+    height:1em;
+  }
+  .cub-32 .tp, .cub-32 .bm {
+    width:1em;
+    height:1em;
+  }
+  .cub-32 .face {
+    background-color:#06cada;
+  }
+  /* .cub-31 styles */
+  .cub-31 {
+    /*transform:translate3D(0em, 0em, 0em) rotateX(0deg) rotateY(0deg) rotateZ(0deg);*/
+    opacity:1;
+    width:3em;
+    height:1em;
+    margin:-0.5em 0 0 -1.5em;
+  }
+  .cub-31 .ft {
+    transform:translateZ(0.5em);
+  }
+  .cub-31 .bk {
+    transform:translateZ(-0.5em) rotateY(180deg);
+  }
+  .cub-31 .rt, .cub-31 .lt {
+    width:1em;
+    height:1em;
+  }
+  .cub-31 .tp, .cub-31 .bm {
+    width:3em;
+    height:1em;
+  }
+  .cub-31 .face {
+    background-color:#06cada;
+  }
+
+  /* .cub-41 styles */
+.cub-41 {
+  /*transform:translate3D(0em, 0em, 0em) rotateX(0deg) rotateY(0deg) rotateZ(0deg);*/
+  opacity:1;
+  width:3em;
+  height:1em;
+  margin:-0.5em 0 0 -1.5em;
+}
+.cub-41 .ft {
+  transform:translateZ(0.5em);
+}
+.cub-41 .bk {
+  transform:translateZ(-0.5em) rotateY(180deg);
+}
+.cub-41 .rt, .cub-41 .lt {
+  width:1em;
+  height:1em;
+}
+.cub-41 .tp, .cub-41 .bm {
+  width:3em;
+  height:1em;
+}
+.cub-41 .face {
+  background-color:#ff8c7a;
+}
+/* .cub-42 styles */
+.cub-42 {
+  /*transform:translate3D(-1em, 0em, 1em) rotateX(0deg) rotateY(0deg) rotateZ(0deg);*/
+  opacity:1;
+  width:1em;
+  height:1em;
+  margin:-1.5em 0 0 -0.5em;
+}
+.cub-42 .ft {
+  transform:translateZ(0.5em);
+}
+.cub-42 .bk {
+  transform:translateZ(-0.5em) rotateY(180deg);
+}
+.cub-42 .rt, .cub-42 .lt {
+  width:1em;
+  height:1em;
+}
+.cub-42 .tp, .cub-42 .bm {
+  width:1em;
+  height:1em;
+}
+.cub-42 .face {
+  background-color:#FF8C7A;
+}
+
+/* .place styles */
+.place {
+  transform:translate3D(0em, 0em, 0em) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  opacity:1;
+  width:10em;
+  height:0em;
+  margin:0em 0 0 -5em;
+}
+.place .ft {
+  transform:translateZ(5em);
+}
+.place .bk {
+  transform:translateZ(-5em) rotateY(180deg);
+}
+.place .rt, .place .lt {
+  width:10em;
+  height:0em;
+}
+.place .tp, .place .bm {
+  width:10em;
+  height:10em;
+}
+.place .face {
+  background-color:#dedede;
+}
+
+@keyframes rotateScane {
+   from { transform: rotateX(-41deg) rotateY(0deg); }
+   to   { transform: rotateX(-41deg) rotateY(360deg); }
+}
+
+.scene {
+   animation-name: rotateScane;
+   animation-duration: 10s;
+   animation-timing-function: linear;
+   animation-delay: 0s;
+   animation-iteration-count: infinite;
+}
+
+.scene {
+  -webkit-transform: rotateX(-41deg) rotateY(412deg);
+  -moz-transform: rotateX(-41deg) rotateY(412deg);
+  -ms-transform: rotateX(-41deg) rotateY(412deg);
+  transform: rotateX(-41deg) rotateY(412deg);
+}
+
+.points {
+  font-family: Arial;
+  color: #969696;
+  font-size: 3em;
+  margin: 0 auto;
+  width: 245px;
+}
+
+  </style>
+  </head>
+  <body>
+
+  <div id="blocks" style="display: none;">
+
+    <div id="block1">
+      <div class="shape cuboid-1 cub-1">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+    </div>
+
+    <div id="block2">
+      <div class="shape cuboid-2 cub-2">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+    </div>
+
+    <div id="block3">
+      <div class="shape cuboid-3 cub-32">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid-3 cub-31">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+    </div>
+
+    <div id="block4">
+      <div class="shape cuboid-4 cub-41">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+      <div class="shape cuboid-4 cub-42">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="points">Points: <span id="total">0</span></div>
+
+  <div id="tridiv">
+    <div class="scene">
+
+      <div class="shape cuboid-5 place">
+        <div class="face ft"></div>
+        <div class="face bk"></div>
+        <div class="face rt"></div>
+        <div class="face lt"></div>
+        <div class="face bm"></div>
+        <div class="face tp"></div>
+      </div>
+
+    </div>
+    </div>
+  </div>
+
+  <script src="http://yandex.st/jquery/2.1.0/jquery.min.js"></script>
+  <script src="http://s.codepen.io/assets/libs/prefixfree.min.js"></script>
+  <script src="scene.js"></script>
+  <script src="game.js"></script>
+  <script src="action.js"></script>
+  </body>
+</html>
